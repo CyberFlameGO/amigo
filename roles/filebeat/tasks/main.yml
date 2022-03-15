@@ -2,5 +2,11 @@
 - name: Add Elastic repository key
   apt_key: url=https://artifacts.elastic.co/GPG-KEY-elasticsearch state=present
 
-- name: Ensure Filebeat is installed
-  apt: deb=https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ version }}-amd64.deb state=present
+- name: Add repository
+  ansible.builtin.apt_repository:
+    repo: deb https://artifacts.elastic.co/packages/{{ version | regex_search('^(\\d+)','\\1') }}.x/apt stable main
+
+- name: Install
+  apt:
+    name: filebeat={{version}}
+    update_cache: yes
